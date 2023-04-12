@@ -24,6 +24,6 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("login/", views.login, name="login"),
     path("settings/", views.settings, name="settings"),
-    # path("question/", views.question),
+    path("new_question/", views.new_question, name="new_question"),
     path("admin/", admin.site.urls),
 ]

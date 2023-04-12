@@ -23,3 +23,7 @@ def register(request):
 def settings(request):
     context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS, "author": models.AUTHOR}
     return render(request, "settings.html", context)
+
+def new_question(request):
+    context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
+    return render(request, "new_question.html", context)

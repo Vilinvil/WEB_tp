@@ -1,1 +1,37 @@
-{% extends "inc/base/base.html" %}
+{% extends "inc/base/base_header.html" %}
+
+{% block header_right %}
+{% include "inc/basic_page/header_right_auth.html" %}
+{% endblock header_right %}
+
+{% block content %}
+<h2 class="mt-5">
+    Create New Question
+</h2>
+<form class="row g-3 needs-validation" novalidate>
+    <div class="col-md-12">
+        <label class="form-label">Title</label>
+        <input type="text" class="form-control" required>
+        <div class="invalid-feedback">
+           Enter title
+        </div>
+    </div>
+    <div class="col-md-12">
+        <label class="form-label">Text</label>
+        <textarea class="form-control" required> </textarea>
+        <div class="invalid-feedback">
+            Please enter text
+        </div>
+    </div>
+    <div class="col-md-12">
+        <label class="form-label">Tags</label>
+        <input type="password" class="form-control" required>
+        <div class="invalid-feedback">
+            Enter 3 or lower tags
+        </div>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">ASK</button>
+    </div>
+</form>
+{% endblock content %}
