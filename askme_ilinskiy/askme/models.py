@@ -5,7 +5,8 @@ QUESTIONS = [
         "answers": f"Answers: {i}",
         "tags": [{"name": f"tag{i}", "ref": f"#"},
                  {"name": f"tag{i + 1}", "ref": f"#"}],
-        "rating": f"{i}"
+        "rating": f"{i}",
+        "href": f"question/{i}"
     } for i in range(20)
 ]
 
