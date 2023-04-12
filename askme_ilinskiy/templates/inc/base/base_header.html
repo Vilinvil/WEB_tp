@@ -7,7 +7,7 @@
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
             <div class="col-4">
-                <a class="navbar-text"" href="#">Askme anything</a>
+                <a class="navbar-text" href="{% url 'index' %}">Askme anything</a>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -17,6 +17,7 @@
             </div>
             <div class="col-8">
                 {% block header_right %}
+                    {% include "inc/basic_page/header_right.html" %}
                 {% endblock header_right %}
             </div>
         </div>

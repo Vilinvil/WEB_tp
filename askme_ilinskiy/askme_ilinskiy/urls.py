@@ -20,7 +20,8 @@ from askme import views
 
 
 urlpatterns = [
-    path('',views.index ),
-    path('question/', views.question),
-    path('admin/', admin.site.urls),
+    path("", views.index, name="index"),
+    path("register/", views.register, name="register"),
+    # path("question/", views.question),
+    path("admin/", admin.site.urls),
 ]

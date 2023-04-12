@@ -1,0 +1,54 @@
+{% extends "inc/base/base_header.html" %}
+
+{% block content %}
+<h2 class="mt-5">
+    Registration
+</h2>
+<form class="row g-3 needs-validation" novalidate>
+    <div class="col-md-6">
+        <label for="username" class="form-label">Логин</label>
+        <input type="text" class="form-control" id="username" required>
+        <div class="invalid-feedback">
+            Введите логин.
+        </div>
+    </div>
+    <div class="col-md-6">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" required>
+        <div class="invalid-feedback">
+            Укажите корректный email адрес.
+        </div>
+    </div>
+    <div class="col-md-6">
+        <label for="password" class="form-label">Пароль</label>
+        <input type="password" class="form-control" id="password" required>
+        <div class="invalid-feedback">
+            Укажите пароль.
+        </div>
+    </div>
+    <div class="col-md-6">
+        <label for="confirmPassword" class="form-label">Подтвердите пароль</label>
+        <input type="password" class="form-control" id="confirmPassword" required>
+        <div class="invalid-feedback">
+            Подтвердите свой пароль.
+        </div>
+    </div>
+    <div class="col-md-6">
+        <label for="nickname" class="form-label">Никнейм</label>
+        <input type="text" class="form-control" id="nickname" required>
+        <div class="invalid-feedback">
+            Введите никнейм.
+        </div>
+    </div>
+    <div class="col-md-6">
+        <label for="photo" class="form-label">Загрузить фото</label>
+        <input type="file" class="form-control" id="photo" required>
+        <div class="invalid-feedback">
+            Загрузите фото.
+        </div>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">Отправить</button>
+    </div>
+</form>
+{% endblock content %}

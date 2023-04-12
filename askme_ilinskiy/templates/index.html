@@ -1,10 +1,7 @@
 {% extends "inc/base/base_header.html" %}
 
-{% block header_right %}
-    {% include "inc/basic_page/header_right.html" %}
-{% endblock header_right %}
-
 {% block content %}
+<h1 class="mt-5">New questions</h1>
     {% for question in questions %}
         {% include "inc/basic_page/question_item.html" %}
     {% endfor %}
