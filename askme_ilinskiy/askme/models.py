@@ -14,7 +14,7 @@ TAGS = [
     {
        "text": f"Tag{i}",
         "color": f"black",
-        "href": f"#"
+        "href": f"/tag/{i}"
     } for i in range(15)
 ]
 

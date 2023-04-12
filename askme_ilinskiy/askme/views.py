@@ -27,3 +27,14 @@ def settings(request):
 def new_question(request):
     context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
     return render(request, "new_question.html", context)
+
+
+def tags(request, tag_id):
+    res = []
+    for question in models.QUESTIONS:
+        tags_list = [tag['name'] for tag in question['tags']]
+        for tag in tags_list:
+            if int(tag[3:]) == tag_id:
+                res.append(question)
+    context = {"questions": res, "tags": models.TAGS, "best_members": models.BEST_MEMBERS, "target_tag": tag_id}
+    return render(request, "tags.html", context)
