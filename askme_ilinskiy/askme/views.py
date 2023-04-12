@@ -10,8 +10,9 @@ def index(request):
     return render(request, "index.html", context)
 
 
-# def question(request):
-#     return render(request, 'question.html')
+def login(request):
+    context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
+    return render(request, "login.html", context)
 
 
 def register(request):
