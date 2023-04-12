@@ -1,0 +1,26 @@
+{% extends "inc/base/base.html" %}
+
+{% block header %}
+
+<header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container-fluid">
+            <div class="col-4">
+                <a class="navbar-text"" href="#">Askme anything</a>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-8">
+                {% block header_right %}
+                {% endblock header_right %}
+            </div>
+        </div>
+    </nav>
+</header>
+
+{% endblock header %}
