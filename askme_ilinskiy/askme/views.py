@@ -18,3 +18,8 @@ def login(request):
 def register(request):
     context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
     return render(request, "register.html", context)
+
+
+def settings(request):
+    context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS, "author": models.AUTHOR}
+    return render(request, "settings.html", context)

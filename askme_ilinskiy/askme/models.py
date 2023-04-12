@@ -23,3 +23,9 @@ BEST_MEMBERS = [
         "href": f"#"
     }for i in range(8)
 ]
+
+AUTHOR = {
+    "login": "dr_temp",
+    "email": "temp@mail.ru",
+    "nickname": "Dr. Temp",
+}
