@@ -24,6 +24,7 @@ def settings(request):
     context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS, "author": models.AUTHOR}
     return render(request, "settings.html", context)
 
+
 def new_question(request):
     context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
     return render(request, "new_question.html", context)
@@ -38,3 +39,10 @@ def tags(request, tag_id):
                 res.append(question)
     context = {"questions": res, "tags": models.TAGS, "best_members": models.BEST_MEMBERS, "target_tag": tag_id}
     return render(request, "tags.html", context)
+
+
+def questionById(request, user_id):
+    # Добавить валидацию
+    context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS, "question": models.QUESTIONS[user_id],
+               "answers": models.ANSWERS}
+    return render(request, "question_by_id.html", context)
