@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends "inc/base/base_header.html" %}
 
-</body>
-</html>
+{% block content %}
+<h2 class="mt-5">
+</h2>
+{% include "inc/basic_page/question_item.html" %}
+<h5 class="page-header"><hr></h5>
+{% for answer in answers %}
+    {% include "inc/answers/answer.html" %}
+{% endfor %}
+{% endblock content %}
