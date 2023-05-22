@@ -7,7 +7,7 @@ QUESTIONS = [
                  {"name": f"tag{i + 1}", "id": i + 1}],
         "rating": f"{i}",
         "id": f"{i}",
-    } for i in range(20)
+    } for i in range(161)
 ]
 
 TAGS = [
@@ -38,3 +38,11 @@ ANSWERS = [
         "isCorrect": True
     } for i in range(8)
 ]
+
+PAGINATION = {
+    "pages": [
+        {"idPage": i, "isActive": True if i==0 else False} for i in range(4)
+    ] ,
+    "isExistPrev": False,
+    "isExistNext": True,
+}

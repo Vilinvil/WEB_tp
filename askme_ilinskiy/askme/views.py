@@ -6,7 +6,39 @@ from django.urls import reverse
 
 # Create your views here.
 def index(request):
-    context = {"questions": models.QUESTIONS, "tags": models.TAGS, "best_members": models.BEST_MEMBERS}
+    try:
+        page_num = request.GET.get('page_num', 0)
+        page_num = int(page_num)
+    except ValueError:
+        page_num = 0
+    questions = models.QUESTIONS[page_num * 20:(page_num + 1) * 20]
+    print("\n")
+    print(page_num)
+    print("\n")
+    print(questions)
+    print("\n")
+    pagination = {"pages": []}
+    if len(models.QUESTIONS[(page_num - 1) * 20:page_num * 20]) != 0:
+        pagination["pages"].append({"idPage": page_num - 1, "isActive": False})
+        pagination["isExistPrev"] = True
+
+    if len(models.QUESTIONS[(page_num ) * 20:(page_num + 1) * 20]) == 0:
+        page_num = 0
+        questions = models.QUESTIONS[page_num * 20:(page_num + 1) * 20]
+        pagination = {"pages": [{"idPage": page_num, "isActive": True}]}
+        pagination["isExistPrev"] = False
+    else:
+        pagination["pages"].append({"idPage": page_num, "isActive": True})
+
+    i = 1
+    while i < 3:
+        if len(models.QUESTIONS[(page_num + i) * 20:(page_num + i + 1) * 20]) != 0:
+            pagination["pages"].append({"idPage": page_num + i, "isActive": False})
+            pagination["isExistNext"] = True
+        i += 1
+
+    context = {"questions": questions, "tags": models.TAGS, "best_members": models.BEST_MEMBERS,
+               "paginator": pagination}
     return render(request, "index.html", context)
 
 

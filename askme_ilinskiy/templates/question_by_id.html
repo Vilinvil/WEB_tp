@@ -4,9 +4,12 @@
 <h2 class="mt-5">
 </h2>
 {% include "inc/basic_page/question_item.html" %}
-<h5 class="page-header"><hr></h5>
+<h5 class="page-header">
+    <hr>
+</h5>
 <h2> Answers: </h2>
 {% for answer in answers %}
-    {% include "inc/answers/answer.html" %}
+{% include "inc/answers/answer.html" %}
 {% endfor %}
 {% endblock content %}
+
