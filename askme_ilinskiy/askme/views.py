@@ -12,11 +12,6 @@ def index(request):
     except ValueError:
         page_num = 0
     questions = models.QUESTIONS[page_num * 20:(page_num + 1) * 20]
-    print("\n")
-    print(page_num)
-    print("\n")
-    print(questions)
-    print("\n")
     pagination = {"pages": []}
     if len(models.QUESTIONS[(page_num - 1) * 20:page_num * 20]) != 0:
         pagination["pages"].append({"idPage": page_num - 1, "isActive": False})
