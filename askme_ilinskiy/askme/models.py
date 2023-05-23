@@ -1,11 +1,72 @@
 from django.contrib.auth.models import User
 from django.db import models
+from datetime import datetime
 
-# class User(models.Model):
-#     profile = models.OneToOneField(User)
-#     avatar = models.ImageField()
-#     def __str__(self):
-#         return self.username
+
+class User(models.Model):
+    profile = models.OneToOneField(User, on_delete=models.PROTECT)
+    avatar = models.ImageField()
+    like = models.ManyToManyField("Like")
+
+    def __str__(self):
+        return self.username
+
+
+class Like(models.Model):
+    TYPE_POST = "p"
+    TYPE_ANSWER = "a"
+    TYPE_CHOICES = [
+        (TYPE_POST, "Post"),
+        (TYPE_POST, "Post"),
+        (TYPE_ANSWER, "Answer"),
+    ]
+    type = models.CharField(max_length=1, choices=TYPE_CHOICES, blank=False)
+
+    class Value(models.IntegerChoices):
+        MINUS = -1
+        NEUTRAL = 0
+        PLUS = 1
+
+    value = models.IntegerField(choices=Value.choices, blank=False)
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=31)
+    post = models.ManyToManyField("Post")
+
+
+class PostManager(models.Manager):
+    def new_posts(self, count_posts):
+        posts = self.order_by("-data_time_creation")
+        posts = posts[0:count_posts]
+        return posts
+
+    def popular_posts(self, count_posts):
+        posts = self.order_by("-mark")
+        posts = posts[0:count_posts]
+        return posts
+
+    def by_tag_posts(self, count_posts, cur_tag):
+        posts = self.filter(tag, cur_tag)
+        posts = posts[0:count_posts]
+        return posts
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=255, blank=False)
+    text = models.TextField(blank=False)
+    mark = models.IntegerField(default=0)
+    data_time_creation = models.DateTimeField(auto_now_add=True)
+    user_id = models.ForeignKey('User', on_delete=models.PROTECT)
+
+
+class Answer(models.Model):
+    text = models.TextField(blank=False)
+    mark = models.IntegerField(default=0)
+    is_correct = models.BooleanField(default=False)
+    post_id = models.ForeignKey('Post', on_delete=models.PROTECT)
+    user_id = models.ForeignKey('User', on_delete=models.PROTECT)
+
 
 def paginate(page_num, count_pages, arr):
     cur_arr = arr[page_num * count_pages:(page_num + 1) * count_pages]
@@ -16,7 +77,7 @@ def paginate(page_num, count_pages, arr):
 
     if len(cur_arr) == 0:
         page_num = 0
-        cur_arr = arr[(page_num * count_pages) : ((page_num + 1) * count_pages)]
+        cur_arr = arr[(page_num * count_pages): ((page_num + 1) * count_pages)]
         pagination = {"pages": [{"idPage": page_num, "isActive": True}], "isExistPrev": False}
     else:
         pagination["pages"].append({"idPage": page_num, "isActive": True})
@@ -72,8 +133,8 @@ ANSWERS = [
 
 PAGINATION = {
     "pages": [
-        {"idPage": i, "isActive": True if i==0 else False} for i in range(4)
-    ] ,
+        {"idPage": i, "isActive": True if i == 0 else False} for i in range(4)
+    ],
     "isExistPrev": False,
     "isExistNext": True,
 }
