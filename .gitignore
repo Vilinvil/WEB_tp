@@ -1,6 +1,7 @@
 # my
 **/.idea
 venv
+**/local_settings.py
 
 ### OSX ###
 .DS_Store

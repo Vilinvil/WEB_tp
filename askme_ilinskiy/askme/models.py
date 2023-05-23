@@ -1,3 +1,12 @@
+from django.contrib.auth.models import User
+from django.db import models
+
+# class User(models.Model):
+#     profile = models.OneToOneField(User)
+#     avatar = models.ImageField()
+#     def __str__(self):
+#         return self.username
+
 def paginate(page_num, count_pages, arr):
     cur_arr = arr[page_num * count_pages:(page_num + 1) * count_pages]
     pagination = {"pages": []}
