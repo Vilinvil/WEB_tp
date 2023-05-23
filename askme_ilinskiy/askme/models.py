@@ -1,3 +1,25 @@
+def paginate(page_num, count_pages, arr):
+    cur_arr = arr[page_num * count_pages:(page_num + 1) * count_pages]
+    pagination = {"pages": []}
+    if len(arr[(page_num - 1) * count_pages:page_num * count_pages]) != 0:
+        pagination["pages"].append({"idPage": page_num - 1, "isActive": False})
+        pagination["isExistPrev"] = True
+
+    if len(cur_arr) == 0:
+        page_num = 0
+        cur_arr = arr[(page_num * count_pages) : ((page_num + 1) * count_pages)]
+        pagination = {"pages": [{"idPage": page_num, "isActive": True}], "isExistPrev": False}
+    else:
+        pagination["pages"].append({"idPage": page_num, "isActive": True})
+
+    for i in range(1, 4):
+        if len(arr[(page_num + i) * count_pages:(page_num + i + 1) * count_pages]) != 0:
+            pagination["pages"].append({"idPage": page_num + i, "isActive": False})
+            pagination["isExistNext"] = True
+
+    return {"pagination": pagination, "cur_arr": cur_arr}
+
+
 QUESTIONS = [
     {
         "title": f"Question {i}",

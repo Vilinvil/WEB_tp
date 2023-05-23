@@ -2,6 +2,7 @@ from . import models
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.http import HttpResponseServerError
 
 
 # Create your views here.
@@ -11,27 +12,13 @@ def index(request):
         page_num = int(page_num)
     except ValueError:
         page_num = 0
-    questions = models.QUESTIONS[page_num * 20:(page_num + 1) * 20]
-    pagination = {"pages": []}
-    if len(models.QUESTIONS[(page_num - 1) * 20:page_num * 20]) != 0:
-        pagination["pages"].append({"idPage": page_num - 1, "isActive": False})
-        pagination["isExistPrev"] = True
-
-    if len(models.QUESTIONS[(page_num ) * 20:(page_num + 1) * 20]) == 0:
-        page_num = 0
-        questions = models.QUESTIONS[page_num * 20:(page_num + 1) * 20]
-        pagination = {"pages": [{"idPage": page_num, "isActive": True}]}
-        pagination["isExistPrev"] = False
-    else:
-        pagination["pages"].append({"idPage": page_num, "isActive": True})
-
-    i = 1
-    while i < 3:
-        if len(models.QUESTIONS[(page_num + i) * 20:(page_num + i + 1) * 20]) != 0:
-            pagination["pages"].append({"idPage": page_num + i, "isActive": False})
-            pagination["isExistNext"] = True
-        i += 1
-
+    COUNT_PAGES = 20
+    res_pagination = models.paginate(page_num, COUNT_PAGES, models.QUESTIONS)
+    try:
+        pagination = res_pagination["pagination"]
+        questions = res_pagination["cur_arr"]
+    except KeyError:
+        return HttpResponseServerError()
     context = {"questions": questions, "tags": models.TAGS, "best_members": models.BEST_MEMBERS,
                "paginator": pagination}
     return render(request, "index.html", context)
