@@ -57,14 +57,10 @@ class Command(BaseCommand):
         fake = Faker()
 
         avatars = [f"static/img/ava/{i}.png" for i in range(1, 11)]
-        # print(avatars)
-        # print('\n')
-        # print(count_el.TAGS)
 
         tags = [Tag(name=fake.word()[:31]) for _ in range(count_el.TAGS)]
         Tag.objects.bulk_create(tags)
         print("Tags filled success")
-        # print(tags)
 
         users = []
         used_usernames = set()
@@ -80,7 +76,6 @@ class Command(BaseCommand):
             users.append(my_user)
         MyUser.objects.bulk_create(users)
         print("MyUsers filled success")
-        # print(users)
 
         posts = [Post(user_id=random.choice(users),
                       title=f"Question{i}",
@@ -88,10 +83,9 @@ class Command(BaseCommand):
                       ) for i in range(count_el.POSTS)]
         Post.objects.bulk_create(posts)
         print("Posts filled success")
-        # posts = Post.objects.all()
+
         for i in range(count_el.TAGS):
             tags[i].post.set([posts[random.randint(0, count_el.POSTS - 1)] for _ in range(random.randint(0, 10))])
-        # print(tags)
 
         answers = []
         for i in range(count_el.POSTS):
@@ -101,19 +95,16 @@ class Command(BaseCommand):
                                       text=fake.text(),
                                       is_correct=random.choice([True, False]),
                                       ))
-        # print(answers)
         Answer.objects.bulk_create(answers)
         print("Answers filled success")
 
         likes2posts = [Like2Post(value=random.randint(-1, 1), post_id=random.choice(posts)) for _ in
                        range(count_el.LIKES * 2 // 3 )]
-        # print(likes2posts)
         Like2Post.objects.bulk_create(likes2posts)
         print("Like2post filled success")
 
         likes2answers = [Like2Answer(value=random.randint(-1, 1), answer_id=random.choice(answers)) for _ in
                          range(count_el.LIKES // 3)]
-        # print(likes2answers)
         Like2Answer.objects.bulk_create(likes2answers)
         print("Like2answer filled success")
 
@@ -130,16 +121,3 @@ class Command(BaseCommand):
 
 
         return "Filling db is OK"
-
-        # likes2posts = [Like2Post(to_whom=choice(profiles), from_whom=choice(profiles)) for _ in range(Count.CONTENT_LIKES)]
-        # Like.objects.bulk_create(likes)
-
-        # for i in range(0, 30):
-        #     user = User.objects.create_user(
-        #         username=fake.username(),
-        #         password=fake.password(length=12),
-        #         email=fake.email(),
-        #     )
-        #     user.profile.nick_name = fake.username()
-        #     user.save()
-        # users = User.objects.all()
