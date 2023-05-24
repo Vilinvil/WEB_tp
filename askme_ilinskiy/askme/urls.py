@@ -1,5 +1,6 @@
-from django.urls import path
 from askme import views
+
+from django.urls import path
 
 urlpatterns = [
     path("", views.index, name="index"),
@@ -9,4 +10,5 @@ urlpatterns = [
     path("new_question/", views.new_question, name="new_question"),
     path("tag/<int:tag_id>", views.tags, name="tags"),
     path("question/<int:user_id>", views.questionById, name="question-by-id"),
+    path("popular_posts/", views.popularPosts, name="popular-posts"),
 ]

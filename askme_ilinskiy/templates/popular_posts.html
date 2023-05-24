@@ -1,0 +1,11 @@
+{% extends "inc/base/base_header.html" %}
+
+{% block content %}
+<h1 class="mt-5">Popular posts</h1>
+    {% for question in questions %}
+        {% include "inc/basic_page/question_item.html" %}
+    {% endfor %}
+<div>
+{% include "inc/basic_page/pagination.html"%}
+</div>
+{% endblock content %}

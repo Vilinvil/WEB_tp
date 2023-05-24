@@ -1,4 +1,5 @@
 from . import models
+
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -23,6 +24,23 @@ def index(request):
                "paginator": pagination}
     return render(request, "index.html", context)
 
+
+def popularPosts(request):
+    try:
+        page_num = request.GET.get('page_num', 0)
+        page_num = int(page_num)
+    except ValueError:
+        page_num = 0
+    COUNT_PAGES = 20
+    res_pagination = models.paginate(page_num, COUNT_PAGES, models.QUESTIONS)
+    try:
+        pagination = res_pagination["pagination"]
+        questions = res_pagination["cur_arr"]
+    except KeyError:
+        return HttpResponseServerError()
+    context = {"questions": questions, "tags": models.TAGS, "best_members": models.BEST_MEMBERS,
+               "paginator": pagination}
+    return render(request, "popular_posts.html", context)
 
 def login(request):
     context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
