@@ -79,6 +79,13 @@ class ManagerPost(models.Manager):
         posts = self.order_by('-data_time_creation')
         return posts[left:right]
 
+    def addTags(self, posts):
+        posts_list = posts.values()
+        for i in range(len(posts_list)):
+            tags = posts[i].tag_set.all()
+            posts_list[i]["tags"] = tags
+        return posts_list
+
 
 class Post(models.Model):
     title = models.CharField(max_length=255, blank=False)
@@ -108,7 +115,7 @@ class Answer(models.Model):
 def paginate(page_num, count_pages, arr):
     cur_arr = arr[page_num * count_pages:(page_num + 1) * count_pages]
     pagination = {"pages": []}
-    if len(arr[(page_num - 1) * count_pages:page_num * count_pages]) != 0:
+    if page_num >=1 and len(arr[(page_num - 1) * count_pages:page_num * count_pages]) != 0:
         pagination["pages"].append({"idPage": page_num - 1, "isActive": False})
         pagination["isExistPrev"] = True
 

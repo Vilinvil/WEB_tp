@@ -8,7 +8,7 @@
         <div class="container-fluid">
             <div class="col-5">
                 <a class="navbar-text" href="{% url 'index' %}">Askme anything</a>
-                <a class="navbar-text p-5" href="{% url 'popular-posts' %}">Popular question</a>
+                <a class="navbar-text p-5" href="{% url 'index' %}?type=popular">Popular question</a>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">

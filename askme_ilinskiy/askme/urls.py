@@ -10,5 +10,5 @@ urlpatterns = [
     path("new_question/", views.new_question, name="new_question"),
     path("tag/<int:tag_id>", views.tags, name="tags"),
     path("question/<int:user_id>", views.questionById, name="question-by-id"),
-    path("popular_posts/", views.popularPosts, name="popular-posts"),
+    # path("popular_posts/", views.popularPosts, name="popular-posts"),
 ]

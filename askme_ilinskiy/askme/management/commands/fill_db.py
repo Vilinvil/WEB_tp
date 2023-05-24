@@ -112,18 +112,22 @@ class Command(BaseCommand):
         print("Like2post filled success")
 
         likes2answers = [Like2Answer(value=random.randint(-1, 1), answer_id=random.choice(answers)) for _ in
-                       range(count_el.LIKES // 3)]
+                         range(count_el.LIKES // 3)]
         # print(likes2answers)
         Like2Answer.objects.bulk_create(likes2answers)
         print("Like2answer filled success")
 
         for post in posts:
             post.mark = Like2Post.objects.getMarkPost(post.id)
+        Post.objects.bulk_update(posts, ['mark'])
+
 
         print("LikesPosts upgrade  success")
         for answer in answers:
             answer.mark = Like2Answer.objects.getMarkAnswer(answer.id)
+        Answer.objects.bulk_update(answers, ['mark'])
         print("LikesAnswer upgrade success")
+
 
         return "Filling db is OK"
 

@@ -13,7 +13,7 @@
                 </a>
 
                 <div style="margin-left: 3px">
-                    {{answer.rating}}
+                    {{answer.mark}}
                 </div>
 
                 <a href="#">
@@ -26,8 +26,8 @@
             </div>
             <div class="row">
                 <div class="col-4 pb-3">
-                    Correct!
-                    {% if answer.isCorrect%}
+                    Is correct?
+                    {% if answer.is_correct%}
                         <img src="{% static 'img/check_mark.png' %}" alt="check-mark" class="check-mark">
                     {% endif%}
                 </div>

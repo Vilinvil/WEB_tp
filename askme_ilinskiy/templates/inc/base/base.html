@@ -34,8 +34,8 @@
                     <h2>Popular Tags:</h2>
                     <p>
                         {% for tag in tags %}
-                        <a href="{% url 'tags' tag.id%}" style="color: {{tag.color}}">
-                            {{tag.text}}
+                        <a href="{% url 'tags' tag.id%}">
+                            {{tag.name}}
                         </a>
                         &nbsp
                         {% endfor %}

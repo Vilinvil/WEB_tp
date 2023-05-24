@@ -10,37 +10,34 @@ from django.http import HttpResponseServerError
 def index(request):
     try:
         page_num = request.GET.get('page_num', 0)
+        type_posts = request.GET.get("type", "")
         page_num = int(page_num)
     except ValueError:
         page_num = 0
     COUNT_PAGES = 20
-    res_pagination = models.paginate(page_num, COUNT_PAGES, models.QUESTIONS)
+    left = (page_num - 1) * COUNT_PAGES if page_num >= 1 else 0
+    right = (page_num + 3) * COUNT_PAGES
+    posts = []
+    if type_posts == "popular":
+        posts = models.Post.objects.popularPosts(left, right)
+    else:
+        posts = models.Post.objects.newPosts(left, right)
+
+    res_pagination = models.paginate(page_num, COUNT_PAGES, posts)
     try:
         pagination = res_pagination["pagination"]
         questions = res_pagination["cur_arr"]
     except KeyError:
         return HttpResponseServerError()
-    context = {"questions": questions, "tags": models.TAGS, "best_members": models.BEST_MEMBERS,
-               "paginator": pagination}
+
+    tags = models.Tag.objects.all()[:15]
+    tags = tags.values()
+
+    questions = models.Post.objects.addTags(questions)
+    context = {"questions": questions, "tags": tags, "best_members": models.BEST_MEMBERS,
+               "paginator": pagination, 'header_text': "Popular posts" if type_posts == "popular" else "New posts"}
     return render(request, "index.html", context)
 
-
-def popularPosts(request):
-    try:
-        page_num = request.GET.get('page_num', 0)
-        page_num = int(page_num)
-    except ValueError:
-        page_num = 0
-    COUNT_PAGES = 20
-    res_pagination = models.paginate(page_num, COUNT_PAGES, models.QUESTIONS)
-    try:
-        pagination = res_pagination["pagination"]
-        questions = res_pagination["cur_arr"]
-    except KeyError:
-        return HttpResponseServerError()
-    context = {"questions": questions, "tags": models.TAGS, "best_members": models.BEST_MEMBERS,
-               "paginator": pagination}
-    return render(request, "popular_posts.html", context)
 
 def login(request):
     context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
@@ -63,18 +60,29 @@ def new_question(request):
 
 
 def tags(request, tag_id):
-    res = []
-    for question in models.QUESTIONS:
-        tags_list = [tag['name'] for tag in question['tags']]
-        for tag in tags_list:
-            if int(tag[3:]) == tag_id:
-                res.append(question)
-    context = {"questions": res, "tags": models.TAGS, "best_members": models.BEST_MEMBERS, "target_tag": tag_id}
+    tag = models.Tag.objects.get(pk=tag_id)
+    posts = tag.post.all()
+    print(type(posts))
+    posts = models.Post.objects.addTags(posts)
+    print(type(posts))
+
+    tags = models.Tag.objects.all()[:15]
+    tags = tags.values()
+    cur_tag = models.Tag.objects.get(pk=tag_id)
+    context = {"questions": posts, "tags": tags, "best_members": models.BEST_MEMBERS,
+               "tag_name": cur_tag}
     return render(request, "tags.html", context)
 
 
 def questionById(request, user_id):
     # Добавить валидацию
-    context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS, "question": models.QUESTIONS[user_id],
-               "answers": models.ANSWERS}
+    post = models.Post.objects.get(pk=user_id)
+
+    answers = post.answer_set.all()
+    answers = answers.order_by('-mark')
+
+    tags = models.Tag.objects.all()[:15]
+    tags = tags.values()
+    context = {"tags": tags, "best_members": models.BEST_MEMBERS, "question": post,
+               "answers": answers}
     return render(request, "question_by_id.html", context)
