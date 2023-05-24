@@ -60,18 +60,13 @@ def login_user(request):
     if request.method == 'GET':
         login_form = forms.LoginForm()
     if request.method == 'POST':
-
         login_form = forms.LoginForm(request.POST)
         if login_form.is_valid():
             user = auth.authenticate(request=request, **login_form.cleaned_data)
             if user:
                 login(request, user)
                 return redirect(reverse('index'))
-            print("not login")
             login_form.add_error(None, "Invalid username or password")
-
-        else:
-            print("not form")
     context = {"form": login_form}
     return render(request, "login.html", context=context)
 
@@ -80,7 +75,22 @@ def logout_user(request):
     return redirect(reverse(index))
 
 def register(request):
-    context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
+    print(request.POST)
+    if request.method == 'GET':
+        register_form = forms.RegistrationForm()
+    if request.method == 'POST':
+        register_form = forms.RegistrationForm(request.POST)
+        if register_form.is_valid():
+            user = register_form.save()
+            if user:
+                return redirect(reverse('login'))
+            print("not login")
+            register_form.add_error(None, "User saving error")
+
+        else:
+            print("not form")
+
+    context = {'form': register_form}
     return render(request, "register.html", context)
 
 @login_required

@@ -71,7 +71,7 @@ class Command(BaseCommand):
                     used_usernames.add(username)
                     break
 
-            user = User.objects.create(username=username, email=fake.email(), password=fake.password())
+            user = User.objects.create_user(username=username, email=fake.email(), password=fake.password())
             my_user = MyUser(profile=user, avatar=random.choice(avatars))
             users.append(my_user)
         MyUser.objects.bulk_create(users)
