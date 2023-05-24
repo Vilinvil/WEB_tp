@@ -1,13 +1,27 @@
 from . import models
+from . import forms
 
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.contrib import auth
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.http import HttpResponseServerError
+from django.http import HttpResponseNotFound
 
 
-# Create your views here.
-def index(request):
+def authenticated_user(func):
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            context = {"is_authorized": True, "username": request.user}
+            return func(request, *args, context=context, **kwargs)
+        else:
+            return func(request, *args, **kwargs)
+    return wrapper
+
+@authenticated_user
+def index(request, context=None):
     try:
         page_num = request.GET.get('page_num', 0)
         type_posts = request.GET.get("type", "")
@@ -34,32 +48,53 @@ def index(request):
     tags = tags.values()
 
     questions = models.Post.objects.addTags(questions)
-    context = {"questions": questions, "tags": tags, "best_members": models.BEST_MEMBERS,
-               "paginator": pagination, 'header_text': "Popular posts" if type_posts == "popular" else "New posts"}
+    if context is None:
+        context = {}
+    context.update({"questions": questions, "tags": tags, "best_members": models.BEST_MEMBERS,
+               "paginator": pagination, 'header_text': "Popular posts" if type_posts == "popular" else "New posts"})
     return render(request, "index.html", context)
 
 
-def login(request):
-    context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
-    return render(request, "login.html", context)
+def login_user(request):
+    print(request.POST)
+    if request.method == 'GET':
+        login_form = forms.LoginForm()
+    if request.method == 'POST':
 
+        login_form = forms.LoginForm(request.POST)
+        if login_form.is_valid():
+            user = auth.authenticate(request=request, **login_form.cleaned_data)
+            if user:
+                login(request, user)
+                return redirect(reverse('index'))
+            print("not login")
+            login_form.add_error(None, "Invalid username or password")
+
+        else:
+            print("not form")
+    context = {"form": login_form}
+    return render(request, "login.html", context=context)
+
+def logout_user(request):
+    auth.logout(request)
+    return redirect(reverse(index))
 
 def register(request):
     context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
     return render(request, "register.html", context)
 
-
+@login_required
 def settings(request):
     context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS, "author": models.AUTHOR}
     return render(request, "settings.html", context)
 
-
+@login_required
 def new_question(request):
     context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
     return render(request, "new_question.html", context)
 
-
-def tags(request, tag_id):
+@authenticated_user
+def tags(request, tag_id, context=None):
     tag = models.Tag.objects.get(pk=tag_id)
     posts = tag.post.all()
     print(type(posts))
@@ -69,20 +104,26 @@ def tags(request, tag_id):
     tags = models.Tag.objects.all()[:15]
     tags = tags.values()
     cur_tag = models.Tag.objects.get(pk=tag_id)
-    context = {"questions": posts, "tags": tags, "best_members": models.BEST_MEMBERS,
-               "tag_name": cur_tag}
+    if context is None:
+        context = {}
+    context.update({"questions": posts, "tags": tags, "best_members": models.BEST_MEMBERS,
+               "tag_name": cur_tag})
     return render(request, "tags.html", context)
 
-
-def questionById(request, user_id):
-    # Добавить валидацию
-    post = models.Post.objects.get(pk=user_id)
+@authenticated_user
+def questionById(request, user_id, context=None):
+    try:
+        post = models.Post.objects.get(pk=user_id)
+    except models.Post.DoesNotExist:
+        return HttpResponseNotFound()
 
     answers = post.answer_set.all()
     answers = answers.order_by('-mark')
 
     tags = models.Tag.objects.all()[:15]
     tags = tags.values()
-    context = {"tags": tags, "best_members": models.BEST_MEMBERS, "question": post,
-               "answers": answers}
+    if context is None:
+        context = {}
+    context.update({"tags": tags, "best_members": models.BEST_MEMBERS, "question": post,
+               "answers": answers})
     return render(request, "question_by_id.html", context)

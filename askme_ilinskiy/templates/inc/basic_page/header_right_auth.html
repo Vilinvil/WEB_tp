@@ -6,13 +6,13 @@
             <button class="btn btn-outline-success" type="submit">Create new question</button>
         </a>
         <span class="navbar-text" style="float: right">
-            <text>Dr. Temp</text>
+            <text>{{username}}</text>
             <div>
                 <a href="{% url 'settings'%}">
                     Settings
                 </a>
                 &nbsp
-                <a href="{% url 'index'%}">
+                <a href="{% url 'logout'%}">
                     Log out
                 </a>
             </div>
