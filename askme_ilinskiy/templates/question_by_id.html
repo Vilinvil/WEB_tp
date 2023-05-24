@@ -1,0 +1,22 @@
+{% extends "inc/base/base_header.html" %}
+
+{% block content %}
+<h2 class="mt-5">
+</h2>
+{% include "inc/basic_page/question_item.html" %}
+<h5 class="page-header">
+    <hr>
+</h5>
+<h2> Answers: </h2>
+{% for answer in answers %}
+{% include "inc/answers/answer.html" %}
+{% endfor %}
+
+<h5 class="page-header">
+    <hr>
+</h5>
+<label>Enter your answer</label>
+<textarea class="form-control mb-1"  placeholder="Enter your answer"> </textarea>
+<button class="btn btn-primary mt-3 mb-5" type="submit">Send answer</button>
+{% endblock content %}
+

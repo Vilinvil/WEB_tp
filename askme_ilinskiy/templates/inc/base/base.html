@@ -1,0 +1,75 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8">
+    <title> Askme Ilinskiy</title>
+
+    <!--    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sticky-footer-navbar/">-->
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="{% static 'css/my.css' %}">
+
+    <!--    Favicon.ico-->
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}"/>
+
+</head>
+<body class="d-flex flex-column h-100">
+
+{% block header %}
+{% endblock header %}
+
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-9">
+                {% block content %}
+                {% endblock content %}
+            </div>
+            <div class="col-3">
+                <div class="row mt-5">
+                    <h2>Popular Tags:</h2>
+                    <p>
+                        {% for tag in tags %}
+                        <a href="{% url 'tags' tag.id%}" style="color: {{tag.color}}">
+                            {{tag.text}}
+                        </a>
+                        &nbsp
+                        {% endfor %}
+                    </p>
+                </div>
+                <div></div>
+                <div class="row">
+                    <h2>Best Members:</h2>
+                    <p>
+                        {% for member in best_members %}
+                    <div>
+                        <a href="{{member.href}}" class="best-member">
+                            {{member.text}}
+                        </a>
+                    </div>
+                    {% endfor %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!--<footer class="footer mt-auto py-3 bg-light">-->
+<!--    <div class="container">-->
+<!--        <span class="text-muted">Place sticky footer content here.</span>-->
+<!--    </div>-->
+<!--</footer>-->
+
+
+<script src="{% static 'js/bootstrap.js' %}"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous">
+</script>
+
+</body>
+</html>
