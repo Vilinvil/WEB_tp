@@ -2,6 +2,7 @@ from askme.models import Like2Post, Like2Answer, Tag, MyUser, Post, Answer
 
 import random
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
 import datetime
 from faker import Faker
@@ -62,22 +63,17 @@ class Command(BaseCommand):
         Tag.objects.bulk_create(tags)
         print("Tags filled success")
 
-        users = []
-        used_usernames = set()
-        for i in range(count_el.USERS):
-            while True:
-                username = fake.first_name()
-                if username not in used_usernames:
-                    used_usernames.add(username)
-                    break
+        users = [User(username=f"Username {i}",
+                      password=make_password(f"password{i}"),
+                      email=f'user{i}@user{i}.com') for i in range(count_el.USERS)]
+        User.objects.bulk_create(users)
+        print("users")
 
-            user = User.objects.create_user(username=username, email=fake.email(), password=fake.password())
-            my_user = MyUser(profile=user, avatar=random.choice(avatars))
-            users.append(my_user)
-        MyUser.objects.bulk_create(users)
+        my_users = [MyUser(profile=user, avatar=random.choice(avatars)) for user in users]
+        MyUser.objects.bulk_create(my_users)
         print("MyUsers filled success")
 
-        posts = [Post(user_id=random.choice(users),
+        posts = [Post(user_id=random.choice(my_users),
                       title=f"Question{i}",
                       text=fake.text(),
                       ) for i in range(count_el.POSTS)]
@@ -90,7 +86,7 @@ class Command(BaseCommand):
         answers = []
         for i in range(count_el.POSTS):
             for _ in range(random.randint(0, 4)):
-                answers.append(Answer(user_id=random.choice(users),
+                answers.append(Answer(user_id=random.choice(my_users),
                                       post_id=random.choice(posts),
                                       text=fake.text(),
                                       is_correct=random.choice([True, False]),
@@ -99,7 +95,7 @@ class Command(BaseCommand):
         print("Answers filled success")
 
         likes2posts = [Like2Post(value=random.randint(-1, 1), post_id=random.choice(posts)) for _ in
-                       range(count_el.LIKES * 2 // 3 )]
+                       range(count_el.LIKES * 2 // 3)]
         Like2Post.objects.bulk_create(likes2posts)
         print("Like2post filled success")
 
@@ -112,12 +108,10 @@ class Command(BaseCommand):
             post.mark = Like2Post.objects.getMarkPost(post.id)
         Post.objects.bulk_update(posts, ['mark'])
 
-
         print("LikesPosts upgrade  success")
         for answer in answers:
             answer.mark = Like2Answer.objects.getMarkAnswer(answer.id)
         Answer.objects.bulk_update(answers, ['mark'])
         print("LikesAnswer upgrade success")
-
 
         return "Filling db is OK"
