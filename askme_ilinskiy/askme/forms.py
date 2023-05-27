@@ -52,6 +52,19 @@ class NewPostForm(forms.ModelForm):
         model = models.Post
         fields = ["title", 'text']
 
+    def clean(self):
+        tag1 = self.cleaned_data.get('tag1')
+        tag2 = self.cleaned_data.get('tag2')
+        tag3 = self.cleaned_data.get('tag3')
+        print(tag1)
+        print(tag2)
+        print(tag3)
+        if (tag1 == tag2 and tag1 != "") or (tag1 == tag3 and tag1 != "") or (tag2 == tag3 and tag3 != ""):
+            raise forms.ValidationError("Don`t use same tags")
+
+        return self.cleaned_data
+
+
     def save(self, username):
         print(username)
         user = models.MyUser.objects.get(profile__username=username)
