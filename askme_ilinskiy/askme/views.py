@@ -155,9 +155,10 @@ def questionById(request, question_id, context=None):
 
     tags = models.Tag.objects.all()[:15]
     tags = tags.values()
+    question = {"id": post.pk, "title": post.title, "text": post.text, "mark": post.mark, "tags": post.tag_set.all()}
     if context is None:
         context = {}
-    context.update({"form": forms.NewAnswerForm(), "tags": tags, "best_members": models.BEST_MEMBERS, "question": post,
+    context.update({"form": forms.NewAnswerForm(), "tags": tags, "best_members": models.BEST_MEMBERS, "question": question,
                     "answers": answers})
     return render(request, "question_by_id.html", context)
 

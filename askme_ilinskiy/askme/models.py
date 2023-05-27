@@ -80,12 +80,11 @@ class ManagerPost(models.Manager):
         return posts[left:right]
 
     def addTags(self, posts):
-        posts_list = posts.values()
-        for i in range(len(posts_list)):
+        posts_dict = posts.values()
+        for i in range(len(posts_dict)):
             tags = posts[i].tag_set.all()
-            posts_list[i]["tags"] = tags
-        return posts_list
-
+            posts_dict[i]["tags"] = tags
+        return posts_dict
 
 class Post(models.Model):
     title = models.CharField(max_length=255, blank=False)
