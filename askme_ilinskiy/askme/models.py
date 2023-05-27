@@ -109,13 +109,13 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.text[
-               :10] + ' ' + self.is_correct.__str__() + " " + self.post_id.__str__() + " " + self.user_id.__str__()
+               :10] + ' ' + self.is_correct.__str__() + " " + self.post_id.__str__() + " " + self.user_id.__str__() + " mark" + self.mark.__str__()
 
 
 def paginate(page_num, count_pages, arr):
     cur_arr = arr[page_num * count_pages:(page_num + 1) * count_pages]
     pagination = {"pages": []}
-    if page_num >=1 and len(arr[(page_num - 1) * count_pages:page_num * count_pages]) != 0:
+    if page_num >= 1 and len(arr[(page_num - 1) * count_pages:page_num * count_pages]) != 0:
         pagination["pages"].append({"idPage": page_num - 1, "isActive": False})
         pagination["isExistPrev"] = True
 

@@ -4,6 +4,7 @@ import random
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
+from django.db import transaction
 import datetime
 from faker import Faker
 
@@ -104,14 +105,26 @@ class Command(BaseCommand):
         Like2Answer.objects.bulk_create(likes2answers)
         print("Like2answer filled success")
 
-        for post in posts:
-            post.mark = Like2Post.objects.getMarkPost(post.id)
-        Post.objects.bulk_update(posts, ['mark'])
-
+        left = 0
+        right = Post.objects.count()
+        size = 10000
+        while left <= right:
+            posts = Post.objects.all()[left:left+size]
+            for post in posts:
+                post.mark = Like2Post.objects.getMarkPost(post.pk)
+            Post.objects.bulk_update(posts, ["mark"])
+            left += size
+            print("likes filled in posts from " + left.__str__() + " to " + (left + size).__str__())
         print("LikesPosts upgrade  success")
-        for answer in answers:
-            answer.mark = Like2Answer.objects.getMarkAnswer(answer.id)
-        Answer.objects.bulk_update(answers, ['mark'])
-        print("LikesAnswer upgrade success")
 
+        left = 0
+        right = Answer.objects.count()
+        size = 10000
+        while left <= right:
+            answers = Answer.objects.all()[left:left + size]
+            for answer in answers:
+                answer.mark = Like2Answer.objects.getMarkAnswer(answer.pk)
+            Answer.objects.bulk_update(answers, ["mark"])
+            left += size
+            print("likes filled in answers from " + left.__str__() + " to " + (left + size).__str__())
         return "Filling db is OK"
