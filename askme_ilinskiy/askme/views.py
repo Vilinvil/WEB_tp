@@ -15,10 +15,12 @@ def authenticated_user(func):
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
             context = {"is_authorized": True, "username": request.user}
-            return func(request, *args, context=context, **kwargs)
+            return func(request, *args, **kwargs, context=context)
         else:
             return func(request, *args, **kwargs)
+
     return wrapper
+
 
 @authenticated_user
 def index(request, context=None):
@@ -51,7 +53,8 @@ def index(request, context=None):
     if context is None:
         context = {}
     context.update({"questions": questions, "tags": tags, "best_members": models.BEST_MEMBERS,
-               "paginator": pagination, 'header_text': "Popular posts" if type_posts == "popular" else "New posts"})
+                    "paginator": pagination,
+                    'header_text': "Popular posts" if type_posts == "popular" else "New posts"})
     return render(request, "index.html", context)
 
 
@@ -70,9 +73,11 @@ def login_user(request):
     context = {"form": login_form}
     return render(request, "login.html", context=context)
 
+
 def logout_user(request):
     auth.logout(request)
     return redirect(reverse(index))
+
 
 def register(request):
     print(request.POST)
@@ -93,15 +98,24 @@ def register(request):
     context = {'form': register_form}
     return render(request, "register.html", context)
 
+
+@authenticated_user
 @login_required
-def settings(request):
-    context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS, "author": models.AUTHOR}
+def settings(request, context=None):
+    if context is None:
+        context = {}
+    context.update({"best_members": models.BEST_MEMBERS})
     return render(request, "settings.html", context)
 
+
+@authenticated_user
 @login_required
-def new_question(request):
-    context = {"tags": models.TAGS, "best_members": models.BEST_MEMBERS}
+def new_question(request, context=None):
+    if context is None:
+        context = {}
+    context.update({"best_members": models.BEST_MEMBERS})
     return render(request, "new_question.html", context)
+
 
 @authenticated_user
 def tags(request, tag_id, context=None):
@@ -117,8 +131,9 @@ def tags(request, tag_id, context=None):
     if context is None:
         context = {}
     context.update({"questions": posts, "tags": tags, "best_members": models.BEST_MEMBERS,
-               "tag_name": cur_tag})
+                    "tag_name": cur_tag})
     return render(request, "tags.html", context)
+
 
 @authenticated_user
 def questionById(request, user_id, context=None):
@@ -135,5 +150,5 @@ def questionById(request, user_id, context=None):
     if context is None:
         context = {}
     context.update({"tags": tags, "best_members": models.BEST_MEMBERS, "question": post,
-               "answers": answers})
+                    "answers": answers})
     return render(request, "question_by_id.html", context)
