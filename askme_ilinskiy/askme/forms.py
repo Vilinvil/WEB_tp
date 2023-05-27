@@ -35,10 +35,51 @@ class RegistrationForm(forms.ModelForm):
         if models.MyUser.objects.filter(profile__username=self.cleaned_data.get('username')).exists():
             raise forms.ValidationError("User with same username exist")
 
-        return self.username
+        return self.cleaned_data.get("username")
 
     def save(self):
         profile = User.objects.create_user(username=self.cleaned_data.get('username'),
                                            email=self.cleaned_data.get('email'),
                                            password=self.cleaned_data.get('password'))
         return models.MyUser.objects.create(profile=profile, avatar=self.cleaned_data.get('avatar'))
+
+
+class NewPostForm(forms.ModelForm):
+    tag1 = forms.CharField(max_length=31, required=False)
+    tag2 = forms.CharField(max_length=31, required=False)
+    tag3 = forms.CharField(max_length=31, required=False)
+    class Meta:
+        model = models.Post
+        fields = ["title", 'text']
+
+    def save(self, username):
+        print(username)
+        user = models.MyUser.objects.get(profile__username=username)
+        post = models.Post.objects.create(title=self.cleaned_data.get('title'), text=self.cleaned_data.get('text'),
+                                          user_id=user)
+
+        tags = []
+        tag1 = self.cleaned_data['tag1']
+        if tag1:
+            tag, created = models.Tag.objects.get_or_create(name=tag1.strip())
+            tag.post.set([post])
+            if created:
+                tags.append(tag)
+
+        tag2 = self.cleaned_data['tag2']
+        if tag2:
+            tag, created = models.Tag.objects.get_or_create(name=tag2.strip())
+            tag.post.set([post])
+            if created:
+                tags.append(tag)
+
+        tag3 = self.cleaned_data['tag3']
+        if tag3:
+            tag, created = models.Tag.objects.get_or_create(name=tag3.strip())
+            tag.post.set([post])
+            if created:
+                tags.append(tag)
+
+        # models.Tag.objects.bulk_create(tags)
+        post.save()
+        return post

@@ -92,9 +92,6 @@ def register(request):
             print("not login")
             register_form.add_error(None, "User saving error")
 
-        else:
-            print("not form")
-
     context = {'form': register_form}
     return render(request, "register.html", context)
 
@@ -111,20 +108,31 @@ def settings(request, context=None):
 @authenticated_user
 @login_required
 def new_question(request, context=None):
+    print(request.POST)
+    if request.method == 'GET':
+        new_post_form = forms.NewPostForm()
+    if request.method == 'POST':
+        new_post_form = forms.NewPostForm(request.POST)
+        if new_post_form.is_valid():
+            post = new_post_form.save(request.user)
+            if post:
+                return redirect(reverse('question-by-id', args=[post.id]))
+            print("not new_question")
+            new_post_form.add_error(None, "Can`t create new question")
+
     if context is None:
         context = {}
-    context.update({"best_members": models.BEST_MEMBERS})
+    context.update({"form": new_post_form, "best_members": models.BEST_MEMBERS})
     return render(request, "new_question.html", context)
 
 
 @authenticated_user
 def tags(request, tag_id, context=None):
     tag = models.Tag.objects.get(pk=tag_id)
-    posts = tag.post.all()
-    print(type(posts))
+    posts = tag.post.order_by("-mark").all()
     posts = models.Post.objects.addTags(posts)
-    print(type(posts))
 
+    # Периписать на рандом ???
     tags = models.Tag.objects.all()[:15]
     tags = tags.values()
     cur_tag = models.Tag.objects.get(pk=tag_id)
@@ -136,9 +144,9 @@ def tags(request, tag_id, context=None):
 
 
 @authenticated_user
-def questionById(request, user_id, context=None):
+def questionById(request, question_id, context=None):
     try:
-        post = models.Post.objects.get(pk=user_id)
+        post = models.Post.objects.get(pk=question_id)
     except models.Post.DoesNotExist:
         return HttpResponseNotFound()
 
