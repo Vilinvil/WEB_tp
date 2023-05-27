@@ -108,6 +108,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+LOGIN_URL = '/askme/login/'
+
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Default primary key field type

@@ -157,6 +157,24 @@ def questionById(request, question_id, context=None):
     tags = tags.values()
     if context is None:
         context = {}
-    context.update({"tags": tags, "best_members": models.BEST_MEMBERS, "question": post,
+    context.update({"form": forms.NewAnswerForm(), "tags": tags, "best_members": models.BEST_MEMBERS, "question": post,
                     "answers": answers})
     return render(request, "question_by_id.html", context)
+
+
+@authenticated_user
+@login_required
+def newAnswer(request, question_id, context=None):
+    print(request.POST)
+    if request.method == 'GET':
+        new_answer_form = forms.NewAnswerForm()
+    if request.method == 'POST':
+        new_answer_form = forms.NewAnswerForm(request.POST)
+        if new_answer_form.is_valid():
+            answer = new_answer_form.save(request.user, question_id)
+            if answer:
+                return redirect(reverse('question-by-id', args=[question_id]) + "#" + answer.id.__str__())
+            print("not new_question")
+            new_answer_form.add_error(None, "Can`t create new answer")
+
+    return redirect(reverse('question-by-id', args=[question_id]))

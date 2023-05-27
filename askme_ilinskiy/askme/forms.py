@@ -19,7 +19,7 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = models.MyUser
-        fields = ['avatar']
+        fields = ["username", "email", "password", "password_check", 'avatar']
 
     def clean(self):
         password = self.cleaned_data.get('password')
@@ -80,6 +80,21 @@ class NewPostForm(forms.ModelForm):
             if created:
                 tags.append(tag)
 
-        # models.Tag.objects.bulk_create(tags)
         post.save()
         return post
+
+
+class NewAnswerForm(forms.ModelForm):
+    class Meta:
+        model = models.Answer
+        fields = ["text"]
+
+    def save(self, username, post_id):
+        print(username)
+        user = models.MyUser.objects.get(profile__username=username)
+        post = models.Post.objects.get(pk=post_id)
+        answer = models.Answer.objects.create(text=self.cleaned_data.get('text'),
+                                          user_id=user, post_id=post)
+
+        answer.save()
+        return answer

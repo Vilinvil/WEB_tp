@@ -1,4 +1,5 @@
 {% extends "inc/base/base_header.html" %}
+{% load bootstrap5 %}
 
 {% block header_right %}
 {% if is_authorized %}
@@ -27,8 +28,13 @@
 <h5 class="page-header">
     <hr>
 </h5>
-<label>Enter your answer</label>
-<textarea class="form-control mb-1"  placeholder="Enter your answer"> </textarea>
-<button class="btn btn-primary mt-3 mb-5" type="submit">Send answer</button>
+
+<form action="{% url 'new-answer' question.id %}" method="POST" class="row g-3 needs-validation">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">Send</button>
+    </div>
+</form>
 {% endblock content %}
 

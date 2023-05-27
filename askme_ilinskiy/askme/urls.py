@@ -10,5 +10,6 @@ urlpatterns = [
     path("new_question/", views.new_question, name="new_question"),
     path("tag/<int:tag_id>", views.tags, name="tags"),
     path("question/<int:question_id>", views.questionById, name="question-by-id"),
+    path("answer/<int:question_id>", views.newAnswer, name="new-answer"),
     path("logout/", views.logout_user, name="logout")
 ]
