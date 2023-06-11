@@ -1,0 +1,19 @@
+{% extends "inc/base/base_header.html" %}
+
+{% block header_right %}
+{% if is_authorized %}
+        {% include "inc/basic_page/header_right_auth.html" %}
+{% else %}
+        {% include "inc/basic_page/header_right.html" %}
+{% endif %}
+{% endblock header_right %}
+
+{% block content %}
+<h1 class="mt-5">{{header_text}}</h1>
+    {% for question in questions %}
+        {% include "inc/basic_page/question_item.html" %}
+    {% endfor %}
+<div>
+{% include "inc/basic_page/pagination.html"%}
+</div>
+{% endblock content %}

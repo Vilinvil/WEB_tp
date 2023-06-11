@@ -1,0 +1,23 @@
+{% load static %}
+
+<div class="row">
+    <div class="col-12">
+        <a href="{% url 'new_question' %}" class="m-3" style="float: right">
+            <button class="btn btn-outline-success" type="submit">Create new question</button>
+        </a>
+        <span class="navbar-text" style="float: right">
+            <text>{{username}}</text>
+            <div>
+                <a href="{% url 'settings'%}">
+                    Settings
+                </a>
+                &nbsp
+                <a href="{% url 'logout'%}">
+                    Log out
+                </a>
+            </div>
+
+        </span>
+        <img src="{% static 'img/default_avatar.jpg' %}" class="avatar" style="float: right">
+    </div>
+</div>

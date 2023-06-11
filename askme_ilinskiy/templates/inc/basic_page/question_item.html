@@ -1,0 +1,39 @@
+<link rel="stylesheet" href="../../../static/css/my.css">{% load static %}
+
+<div class="question">
+    <div class="row h-100">
+        <div class="col-2 h-100 px-1">
+            <div class="question-avatar">
+                <!--                 ТУт вероятно будет парамметр контекста, в котором передадим картинку -->
+                <img src="{% static 'img/default_avatar.jpg' %}" alt="avatar">
+            </div>
+            <div class="col-md-1 offset-md-7">
+                <a href="#">
+                    <img src="{% static 'img/up_vote.png' %}" alt="up_vote" class="question-vote">
+                </a>
+
+                <div style="margin-left: 3px">
+                    {{question.mark}}
+                </div>
+
+                <a href="#">
+                    <img src="{% static 'img/down_vote.png' %}" alt="down_vote" class="question-vote">
+                </a>
+            </div>
+        </div>
+        <div class="col-10 h-100">
+            <h2><a href="{% url 'question-by-id' question.id %}"> {{ question.title }}</a></h2>
+            <div class="question-text overflow-auto">{{ question.text }}
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    {{ question.answers }}
+                </div>
+                <div class="col-8"> Tags: {% for tag in question.tags %}
+                    <a href="{%url 'tags' tag.id%}"> {{tag.name}} </a>&nbsp
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

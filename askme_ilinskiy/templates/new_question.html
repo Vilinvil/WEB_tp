@@ -1,0 +1,27 @@
+{% extends "inc/base/base_header.html" %}
+{% load bootstrap5 %}
+
+{% block header_right %}
+{% if is_authorized %}
+    {% with "inc/basic_page/header_right_auth.html" as path_header %}
+        {% include path_header %}
+    {% endwith %}
+{% else %}
+    {% with "inc/basic_page/header_right.html" as path_header %}
+        {% include path_header %}
+    {% endwith %}
+{% endif %}
+{% endblock header_right %}
+
+{% block content %}
+<h2 class="mt-5">
+    Create New Question
+</h2>
+<form action="{% url 'new_question' %}" method="POST" class="row g-3 needs-validation">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">ASK</button>
+    </div>
+</form>
+{% endblock content %}

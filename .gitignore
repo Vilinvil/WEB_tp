@@ -1,6 +1,8 @@
 # my
 **/.idea
 venv
+**/local_settings.py
+**/static/img/ava/
 
 ### OSX ###
 .DS_Store
