@@ -37,6 +37,12 @@ class RegistrationForm(forms.ModelForm):
 
         return self.cleaned_data.get("username")
 
+    def clean_email(self):
+        if models.MyUser.objects.filter(profile__email=self.cleaned_data.get('email')).exists():
+            raise forms.ValidationError("User with same email exist")
+
+        return self.cleaned_data.get("email")
+
     def save(self):
         profile = User.objects.create_user(username=self.cleaned_data.get('username'),
                                            email=self.cleaned_data.get('email'),
@@ -48,6 +54,7 @@ class NewPostForm(forms.ModelForm):
     tag1 = forms.CharField(max_length=31, required=False)
     tag2 = forms.CharField(max_length=31, required=False)
     tag3 = forms.CharField(max_length=31, required=False)
+
     class Meta:
         model = models.Post
         fields = ["title", 'text']
@@ -63,7 +70,6 @@ class NewPostForm(forms.ModelForm):
             raise forms.ValidationError("Don`t use same tags")
 
         return self.cleaned_data
-
 
     def save(self, username):
         print(username)
@@ -107,7 +113,48 @@ class NewAnswerForm(forms.ModelForm):
         user = models.MyUser.objects.get(profile__username=username)
         post = models.Post.objects.get(pk=post_id)
         answer = models.Answer.objects.create(text=self.cleaned_data.get('text'),
-                                          user_id=user, post_id=post)
+                                              user_id=user, post_id=post)
 
         answer.save()
         return answer
+
+
+class SettingsForm(forms.ModelForm):
+    username = forms.CharField(max_length=255)
+    email = forms.EmailField()
+    avatar = forms.ImageField(required=False)
+    username_request = None
+    email_request = None
+
+    class Meta:
+        model = models.MyUser
+        fields = ["username", "email", 'avatar']
+
+
+    def clean_username(self):
+        print("undo" + self.username_request.__str__())
+        if models.MyUser.objects.filter(profile__username=self.cleaned_data.get(
+                'username')).exists() and self.cleaned_data.get('username').__str__() != self.username_request.__str__():
+            raise forms.ValidationError("User with same username exist")
+
+        print("after" + self.username_request.__str__())
+        return self.cleaned_data.get("username")
+
+    def clean_email(self):
+        if models.MyUser.objects.filter(
+                profile__email=self.cleaned_data.get('email')).exists() and self.email_request.__str__() != self.cleaned_data.get('email').__str__():
+            raise forms.ValidationError("User with same email exist")
+
+        return self.cleaned_data.get("email")
+
+    def save(self, username):
+        print("in save" + username.__str__())
+        user = models.MyUser.objects.get(profile__username=username)
+        user.profile.username = self.cleaned_data.get('username')
+        user.profile.email = self.cleaned_data.get('email')
+        user.profile.password = self.cleaned_data.get('password')
+        print(self.cleaned_data.get('avatar'))
+        if self.cleaned_data.get('avatar') is not None:
+            user.avatar = self.cleaned_data.get('avatar')
+        user.save()
+        return user

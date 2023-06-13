@@ -18,6 +18,6 @@
             </div>
 
         </span>
-        <img src="{% static 'img/default_avatar.jpg' %}" class="avatar" style="float: right">
+        <img src="{{request.user.myuser.avatar.url}}" class="avatar" style="float: right">
     </div>
 </div>

@@ -5,7 +5,8 @@ from datetime import datetime
 
 class MyUser(models.Model):
     profile = models.OneToOneField(User, on_delete=models.PROTECT)
-    avatar = models.ImageField(upload_to="static/img/ava", default="static/img/default_avatar.jpg")
+    avatar = models.ImageField(blank=True, null=True, upload_to='avatars/%y/%m/%d/',
+                               default='default_avatar.jpg')
 
     like2post = models.ManyToManyField("Like2Post")
     like2answer = models.ManyToManyField("Like2Answer")
@@ -79,12 +80,14 @@ class ManagerPost(models.Manager):
         posts = self.order_by('-data_time_creation')
         return posts[left:right]
 
-    def addTags(self, posts):
-        posts_dict = posts.values()
+    def addTagsAndAvatars(self, posts):
+        posts_dict = posts.select_related('user_id').values('id', 'title', 'text', 'mark', 'user_id')
         for i in range(len(posts_dict)):
+            posts_dict[i]['avatar_url'] = posts[i].user_id.avatar.url
             tags = posts[i].tag_set.all()
             posts_dict[i]["tags"] = tags
         return posts_dict
+
 
 class Post(models.Model):
     title = models.CharField(max_length=255, blank=False)

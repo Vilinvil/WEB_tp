@@ -5,7 +5,7 @@
         <div class="col-2 h-100 px-1">
             <div class="question-avatar">
                 <!--                 ТУт вероятно будет парамметр контекста, в котором передадим картинку -->
-                <img src="{% static 'img/default_avatar.jpg' %}" alt="avatar">
+                <img src="{{question.avatar_url}}" alt="avatar">
             </div>
             <div class="col-md-1 offset-md-7">
                 <a href="#">

@@ -2,8 +2,11 @@ from . import models
 from . import forms
 
 from django.contrib import auth
+from django.contrib import messages
 from django.contrib.auth import login
+from django.forms import model_to_dict
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -38,7 +41,8 @@ def index(request, context=None):
         posts = models.Post.objects.popularPosts(left, right)
     else:
         posts = models.Post.objects.newPosts(left, right)
-
+    # print(posts[0].user_id.avatar.url)
+    # print("\n")
     res_pagination = models.paginate(page_num, COUNT_PAGES, posts)
     try:
         pagination = res_pagination["pagination"]
@@ -49,7 +53,10 @@ def index(request, context=None):
     tags = models.Tag.objects.all()[:15]
     tags = tags.values()
 
-    questions = models.Post.objects.addTags(questions)
+    print(questions[0])
+    print("\n")
+    questions = models.Post.objects.addTagsAndAvatars(questions)
+    print(questions[0])
     if context is None:
         context = {}
     context.update({"questions": questions, "tags": tags, "best_members": models.BEST_MEMBERS,
@@ -98,10 +105,24 @@ def register(request):
 
 @authenticated_user
 @login_required
+@require_http_methods(['GET', 'POST'])
 def settings(request, context=None):
+    if request.method == 'GET':
+        print(request.user)
+        data= model_to_dict(request.user)
+        form = forms.SettingsForm(initial=data)
+    else:
+        print("BBBBPUT" + request.user.__str__())
+        form = forms.SettingsForm(request.POST, files=request.FILES, instance=request.user)
+        form.username_request = request.user
+        form.email_request = request.user.email
+        previous_username = request.user.__str__()
+        if form.is_valid():
+            form.save(previous_username)
+            messages.success(request, "Changes saved successfully")
     if context is None:
         context = {}
-    context.update({"best_members": models.BEST_MEMBERS})
+    context.update({"best_members": models.BEST_MEMBERS, "form": form})
     return render(request, "settings.html", context)
 
 
@@ -130,7 +151,7 @@ def new_question(request, context=None):
 def tags(request, tag_id, context=None):
     tag = models.Tag.objects.get(pk=tag_id)
     posts = tag.post.order_by("-mark").all()
-    posts = models.Post.objects.addTags(posts)
+    posts = models.Post.objects.addTagsAndAvatars(posts)
 
     # Периписать на рандом ???
     tags = models.Tag.objects.all()[:15]
@@ -146,16 +167,16 @@ def tags(request, tag_id, context=None):
 @authenticated_user
 def questionById(request, question_id, context=None):
     try:
-        post = models.Post.objects.get(pk=question_id)
+        post = models.Post.objects.filter(pk=question_id)
     except models.Post.DoesNotExist:
         return HttpResponseNotFound()
 
-    answers = post.answer_set.all()
+    answers = post[0].answer_set.all()
     answers = answers.order_by('-mark')
 
     tags = models.Tag.objects.all()[:15]
     tags = tags.values()
-    question = {"id": post.pk, "title": post.title, "text": post.text, "mark": post.mark, "tags": post.tag_set.all()}
+    question = models.Post.objects.addTagsAndAvatars(post)[0]
     if context is None:
         context = {}
     context.update({"form": forms.NewAnswerForm(), "tags": tags, "best_members": models.BEST_MEMBERS, "question": question,

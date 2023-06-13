@@ -3,6 +3,7 @@
 venv
 **/local_settings.py
 **/static/img/ava/
+askme_ilinskiy/media
 
 ### OSX ###
 .DS_Store

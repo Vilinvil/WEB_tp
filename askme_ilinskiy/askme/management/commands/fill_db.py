@@ -1,6 +1,7 @@
 from askme.models import Like2Post, Like2Answer, Tag, MyUser, Post, Answer
 
 import random
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
@@ -57,7 +58,7 @@ class Command(BaseCommand):
         Faker.seed(datetime.time())
         fake = Faker()
 
-        avatars = [f"static/img/ava/{i}.png" for i in range(1, 11)]
+        avatars = [f"avatars_fill_db/{i}.png" for i in range(1, 11)]
 
         tags = [Tag(name=fake.word()[:31]) for _ in range(count_el.TAGS)]
         Tag.objects.bulk_create(tags)
